@@ -29,11 +29,18 @@ fi
 
 java -cp $CPATH org.junit.runner.JUnitCore TestListExamples > junit-output.txt
 
-lastline=$(cat junit-output.txt | tail -n 2 | head -n 1)
-tests=$(echo $lastline | awk -F'[, ]' '{print $3}')
-failures=$(echo $lastline | awk -F'[, ]' '{print $6}')
-successes=$((tests - failures))
+contentsOfOutput=$(cat junit-output.txt)
 
-echo "Your score is $successes / $tests"
+if [[ $contentsOfOutput == *'Failures'*  ]]; then
+    lastline=$(cat junit-output.txt | tail -n 2 | head -n 1)
+    tests=$(echo $lastline | awk -F'[, ]' '{print $3}')
+    failures=$(echo $lastline | awk -F'[, ]' '{print $6}')
+    successes=$((tests - failures))
+    echo "Your score is: $successes / $tests"
+elif [[ $contentsOfOutput == *'OK'* ]]; then
+    lastline2=$(cat junit-output.txt | tail -n 2 | head -n 1)
+    tests2=$(echo $lastline2 | grep -o '[0-9]\+')
+    echo "Passed All: $tests2 / $tests2"
+fi
 
 
